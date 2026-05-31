@@ -117,12 +117,12 @@
   <div class="chat-area" id="chatArea">
     <div class="welcome" id="welcome">
       <h1>KelivaX</h1>
-      <p>Aaj main aapki kya madad kar sakta hu?</p>
+      <p>How can I help you today?</p>
       <div class="suggestions">
-        <button class="suggestion-btn" onclick="suggest(this)">💡 Koi idea do</button>
-        <button class="suggestion-btn" onclick="suggest(this)">📝 Likhne mein help karo</button>
-        <button class="suggestion-btn" onclick="suggest(this)">🔍 Kuch explain karo</button>
-        <button class="suggestion-btn" onclick="suggest(this)">💻 Code likhne mein help karo</button>
+        <button class="suggestion-btn" onclick="suggest(this)">💡 Give me some idea</button>
+        <button class="suggestion-btn" onclick="suggest(this)">📝 Help with writing</button>
+        <button class="suggestion-btn" onclick="suggest(this)">🔍 Explain something</button>
+        <button class="suggestion-btn" onclick="suggest(this)">💻 Help with writing code</button>
       </div>
     </div>
   </div>
@@ -131,7 +131,7 @@
     <div class="input-box">
       <div class="preview-area" id="previewArea"></div>
       <div class="input-top">
-        <textarea id="userInput" rows="1" placeholder="KelivaX se kuch bhi pucho..." onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
+        <textarea id="userInput" rows="1" placeholder="Search anything..." onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
         <button class="send-btn" id="sendBtn" onclick="sendMsg()" title="Send">
           <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
         </button>
@@ -243,7 +243,7 @@ async function sendMsg() {
     await typeMsg(reply);
   } catch(e) {
     removeThinking(thinkId);
-    addMsg('❌ Error aa gaya, dobara try karo!', 'ai');
+    addMsg('❌ Error occourred, Please try again!', 'ai');
   }
   btn.disabled = false;
 }
@@ -347,7 +347,7 @@ async function toggleMic() {
       mediaRecorder.start();
       isRecording = true;
       btn.classList.add('active');
-    } catch(e) { alert('Mic permission do browser mein!'); }
+    } catch(e) { alert('Give permission in the browser!'); }
   } else {
     mediaRecorder.stop();
     isRecording = false;
