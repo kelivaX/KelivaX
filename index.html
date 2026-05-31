@@ -138,7 +138,7 @@ function addMsg(text, type, atts = []) {
     if (a.type === 'image') attHtml += `<img src="${a.url}">`;
     else attHtml += `<span class="file-tag">📎 ${a.name}</span>`;
   });
-  div.innerHTML = `<div class="avatar ${type}">${type === 'ai' ? '🤖' : '👤'}</div><div class="bubble">${text}${attHtml}</div>`;
+  div.innerHTML = `<div class="avatar ${type}">${type === 'ai' ? 'k' : 'U'}</div><div class="bubble">${text}${attHtml}</div>`;
   area.appendChild(div);
   area.scrollTop = area.scrollHeight;
 }
