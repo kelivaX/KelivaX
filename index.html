@@ -1,18 +1,217 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>KelivaX AI</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #212121; color: #ececec; font-family: 'Segoe UI', sans-serif; display: flex; height: 100vh; }
+    .sidebar { width: 260px; background: #171717; display: flex; flex-direction: column; padding: 16px; gap: 8px; }
+    .sidebar h2 { color: white; font-size: 20px; padding: 10px; font-weight: 700; }
+    .new-chat { background: #2f2f2f; border: none; color: white; padding: 12px; border-radius: 8px; cursor: pointer; font-size: 14px; text-align: left; }
+    .new-chat:hover { background: #3f3f3f; }
+    .main { flex: 1; display: flex; flex-direction: column; }
+    .chat-area { flex: 1; overflow-y: auto; padding: 40px 15%; display: flex; flex-direction: column; gap: 24px; }
+    .msg { display: flex; gap: 12px; align-items: flex-start; }
+    .msg.user { flex-direction: row-reverse; }
+    .avatar { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+    .avatar.ai { background: #19c37d; }
+    .avatar.user { background: #5436da; }
+    .bubble { max-width: 70%; padding: 12px 16px; border-radius: 12px; font-size: 15px; line-height: 1.6; background: #2f2f2f; }
+    .bubble img { max-width: 200px; border-radius: 8px; margin-top: 8px; }
+    .welcome { text-align: center; margin: auto; padding: 40px; }
+    .welcome h1 { font-size: 32px; margin-bottom: 8px; }
+    .welcome p { color: #888; font-size: 16px; }
+    .input-area { padding: 16px 15%; background: #212121; }
+    .input-box { background: #2f2f2f; border-radius: 12px; padding: 10px 14px; }
+    .input-top { display: flex; align-items: center; gap: 8px; }
+    .input-top input[type=text] { flex: 1; background: transparent; border: none; color: white; font-size: 15px; outline: none; padding: 6px 0; }
+    .input-top input[type=text]::placeholder { color: #666; }
+    .input-bottom { display: flex; align-items: center; gap: 8px; margin-top: 8px; padding-top: 8px; border-top: 1px solid #444; }
+    .icon-btn { background: none; border: none; color: #888; font-size: 18px; cursor: pointer; padding: 4px 8px; border-radius: 6px; }
+    .icon-btn:hover { background: #3f3f3f; color: white; }
+    .icon-btn.recording { color: red; }
+    .send-btn { background: #19c37d; border: none; color: white; width: 36px; height: 36px; border-radius: 8px; cursor: pointer; font-size: 18px; margin-left: auto; }
+    .send-btn:disabled { background: #444; cursor: not-allowed; }
+    .preview-area { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+    .preview-item { position: relative; }
+    .preview-item img { width: 60px; height: 60px; object-fit: cover; border-radius: 6px; }
+    .preview-item .remove { position: absolute; top: -6px; right: -6px; background: red; color: white; border: none; border-radius: 50%; width: 18px; height: 18px; font-size: 11px; cursor: pointer; }
+    .file-tag { background: #3f3f3f; padding: 4px 10px; border-radius: 20px; font-size: 12px; color: #ccc; }
+    .typing { color: #888; font-size: 14px; padding: 4px 15%; }
+  </style>
 </head>
 <body>
 
-  <h1>KelivaX AI Assistant</h1>
+<div class="sidebar">
+  <h2>KelivaX AI</h2>
+  <button class="new-chat" onclick="newChat()">+ New Chat</button>
+</div>
 
-  <iframe
-    src="https://kelivax-kelivax.hf.space"
-    width="100%"
-    height="600px"
-    frameborder="0"
-  ></iframe>
+<div class="main">
+  <div class="chat-area" id="chatArea">
+    <div class="welcome" id="welcome">
+      <h1>KelivaX AI</h1>
+      <p>Powered by Anshal — Kuch bhi pucho!</p>
+    </div>
+  </div>
+  <div class="typing" id="typing"></div>
+  <div class="input-area">
+    <div class="input-box">
+      <div class="preview-area" id="previewArea"></div>
+      <div class="input-top">
+        <input type="text" id="userInput" placeholder="Kuch bhi pucho..." onkeydown="if(event.key==='Enter')sendMsg()" />
+        <button class="send-btn" id="sendBtn" onclick="sendMsg()">↑</button>
+      </div>
+      <div class="input-bottom">
+        <button class="icon-btn" onclick="document.getElementById('imgInput').click()" title="Image">🖼️</button>
+        <button class="icon-btn" onclick="document.getElementById('fileInput').click()" title="File">📎</button>
+        <button class="icon-btn" onclick="document.getElementById('videoInput').click()" title="Video">🎥</button>
+        <button class="icon-btn" id="micBtn" onclick="toggleMic()" title="Voice">🎤</button>
+        <input type="file" id="imgInput" accept="image/*" style="display:none" onchange="handleImage(event)">
+        <input type="file" id="fileInput" accept=".pdf,.txt,.doc,.docx" style="display:none" onchange="handleFile(event)">
+        <input type="file" id="videoInput" accept="video/*" style="display:none" onchange="handleVideo(event)">
+      </div>
+    </div>
+  </div>
+</div>
 
+<script>
+const GROQ_KEY = "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 ";
+let history = [];
+let attachments = [];
+let mediaRecorder = null;
+let isRecording = false;
+let audioChunks = [];
+
+async function sendMsg() {
+  const input = document.getElementById('userInput');
+  const text = input.value.trim();
+  if (!text && attachments.length === 0) return;
+
+  document.getElementById('welcome')?.remove();
+
+  let userContent = text;
+  if (attachments.length > 0) {
+    userContent += attachments.map(a => a.text ? '\n[File: ' + a.name + ']\n' + a.text : '\n[' + a.type + ': ' + a.name + ']').join('');
+  }
+
+  addMsg(text || '📎 Attachment', 'user', attachments);
+  history.push({ role: 'user', content: userContent });
+  input.value = '';
+  attachments = [];
+  document.getElementById('previewArea').innerHTML = '';
+
+  const btn = document.getElementById('sendBtn');
+  btn.disabled = true;
+  document.getElementById('typing').textContent = 'KelivaX soch raha hai...';
+
+  try {
+    const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + GROQ_KEY },
+      body: JSON.stringify({
+        model: 'llama-3.3-70b-versatile',
+        messages: [{ role: 'system', content: 'You are a helpful AI assistant.' }, ...history],
+        max_tokens: 1024
+      })
+    });
+    const data = await res.json();
+    const reply = data.choices[0].message.content;
+    history.push({ role: 'assistant', content: reply });
+    addMsg(reply, 'ai');
+  } catch(e) {
+    addMsg('Error aa gaya, dobara try karo!', 'ai');
+  }
+
+  btn.disabled = false;
+  document.getElementById('typing').textContent = '';
+}
+
+function addMsg(text, type, atts = []) {
+  const area = document.getElementById('chatArea');
+  const div = document.createElement('div');
+  div.className = 'msg ' + type;
+  let attHtml = '';
+  atts.forEach(a => {
+    if (a.type === 'image') attHtml += `<img src="${a.url}">`;
+    else attHtml += `<span class="file-tag">📎 ${a.name}</span>`;
+  });
+  div.innerHTML = `<div class="avatar ${type}">${type === 'ai' ? '🤖' : '👤'}</div><div class="bubble">${text}${attHtml}</div>`;
+  area.appendChild(div);
+  area.scrollTop = area.scrollHeight;
+}
+
+function handleImage(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const url = URL.createObjectURL(file);
+  attachments.push({ type: 'image', name: file.name, url });
+  const prev = document.getElementById('previewArea');
+  prev.innerHTML += `<div class="preview-item"><img src="${url}"><button class="remove" onclick="this.parentNode.remove()">×</button></div>`;
+}
+
+function handleFile(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(ev) {
+    attachments.push({ type: 'file', name: file.name, text: ev.target.result });
+    const prev = document.getElementById('previewArea');
+    prev.innerHTML += `<div class="preview-item"><span class="file-tag">📎 ${file.name}</span></div>`;
+  };
+  reader.readAsText(file);
+}
+
+function handleVideo(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  attachments.push({ type: 'video', name: file.name });
+  const prev = document.getElementById('previewArea');
+  prev.innerHTML += `<div class="preview-item"><span class="file-tag">🎥 ${file.name}</span></div>`;
+}
+
+async function toggleMic() {
+  const btn = document.getElementById('micBtn');
+  if (!isRecording) {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    mediaRecorder = new MediaRecorder(stream);
+    audioChunks = [];
+    mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
+    mediaRecorder.onstop = async () => {
+      const blob = new Blob(audioChunks, { type: 'audio/webm' });
+      const formData = new FormData();
+      formData.append('file', blob, 'voice.webm');
+      formData.append('model', 'whisper-large-v3');
+      try {
+        const res = await fetch('https://api.groq.com/openai/v1/audio/transcriptions', {
+          method: 'POST',
+          headers: { 'Authorization': 'Bearer ' + GROQ_KEY },
+          body: formData
+        });
+        const data = await res.json();
+        document.getElementById('userInput').value = data.text || '';
+      } catch(e) { alert('Voice error!'); }
+    };
+    mediaRecorder.start();
+    isRecording = true;
+    btn.classList.add('recording');
+    btn.textContent = '⏹️';
+  } else {
+    mediaRecorder.stop();
+    isRecording = false;
+    btn.classList.remove('recording');
+    btn.textContent = '🎤';
+  }
+}
+
+function newChat() {
+  history = [];
+  attachments = [];
+  document.getElementById('chatArea').innerHTML = '<div class="welcome" id="welcome"><h1>KelivaX AI</h1><p>Powered by Anshal — Kuch bhi pucho!</p></div>';
+  document.getElementById('previewArea').innerHTML = '';
+}
+</script>
 </body>
 </html>
