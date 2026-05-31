@@ -232,7 +232,7 @@ async function sendMsg() {
       headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + GROQ_KEY },
       body: JSON.stringify({
         model: 'llama-3.3-70b-versatile',
-        messages: [{ role: 'system', content: 'You are KelivaX, a helpful and friendly AI assistant. Give detailed, well-formatted answers using markdown.' }, ...history],
+        messages: [{ role: 'system', content: 'You are KelivaX, a helpful and friendly AI assistant. Always respond in the same language the user writes in. If user writes in Hindi, respond in Hindi. If user writes in English, respond in English. Give detailed, well-formatted answers using markdown. Use relevant emojis naturally in your responses to make them more engaging and friendly.'],
         max_tokens: 2048
       })
     });
