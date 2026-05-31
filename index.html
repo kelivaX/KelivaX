@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>KelivaX AI</title>
+  <title>KelivaX</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { background: #212121; color: #ececec; font-family: 'Segoe UI', sans-serif; display: flex; height: 100vh; }
@@ -45,15 +45,15 @@
 <body>
 
 <div class="sidebar">
-  <h2>KelivaX AI</h2>
+  <h2>KelivaX</h2>
   <button class="new-chat" onclick="newChat()">+ New Chat</button>
 </div>
 
 <div class="main">
   <div class="chat-area" id="chatArea">
     <div class="welcome" id="welcome">
-      <h1>KelivaX AI</h1>
-      <p>Powered by Anshal — Kuch bhi pucho!</p>
+      <h1>KelivaX</h1>
+      <p>Powered by Anshal</p>
     </div>
   </div>
   <div class="typing" id="typing"></div>
@@ -61,7 +61,7 @@
     <div class="input-box">
       <div class="preview-area" id="previewArea"></div>
       <div class="input-top">
-        <input type="text" id="userInput" placeholder="Kuch bhi pucho..." onkeydown="if(event.key==='Enter')sendMsg()" />
+        <input type="text" id="userInput" placeholder="Search anything..." onkeydown="if(event.key==='Enter')sendMsg()" />
         <button class="send-btn" id="sendBtn" onclick="sendMsg()">↑</button>
       </div>
       <div class="input-bottom">
@@ -105,7 +105,7 @@ async function sendMsg() {
 
   const btn = document.getElementById('sendBtn');
   btn.disabled = true;
-  document.getElementById('typing').textContent = 'KelivaX soch raha hai...';
+  document.getElementById('typing').textContent = 'KelivaX Searching...';
 
   try {
     const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
@@ -122,7 +122,7 @@ async function sendMsg() {
     history.push({ role: 'assistant', content: reply });
     addMsg(reply, 'ai');
   } catch(e) {
-    addMsg('Error aa gaya, dobara try karo!', 'ai');
+    addMsg('Error,Please try again!', 'ai');
   }
 
   btn.disabled = false;
