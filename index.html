@@ -472,17 +472,17 @@ function handleImage(e) {
 }
 function handleFile(e) {
   const file = e.target.files[0]; if (!file) return;
-  const reader = new FileReader();
-  reader.onload = function(ev) {
-    attachments.push({ type: 'file', name: file.name, text: ev.target.result });
-    document.getElementById('previewArea').innerHTML += '<div class="preview-item"><span class="file-tag">📎 ' + file.name + '</span></div>';
-  };
-  reader.readAsText(file);
-}
-function handleVideo(e) {
-  const file = e.target.files[0]; if (!file) return;
-  attachments.push({ type: 'video', name: file.name });
-  document.getElementById('previewArea').innerHTML += '<div class="preview-item"><span class="file-tag">🎥 ' + file.name + '</span></div>';
+  if (file.type === 'application/pdf') {
+    attachments.push({ type: 'file', name: file.name, text: '[PDF file: ' + file.name + ']' });
+    document.getElementById('previewArea').innerHTML += '<div class="preview-item"><span class="file-tag">📄 ' + file.name + '</span></div>';
+  } else {
+    const reader = new FileReader();
+    reader.onload = function(ev) {
+      attachments.push({ type: 'file', name: file.name, text: ev.target.result });
+      document.getElementById('previewArea').innerHTML += '<div class="preview-item"><span class="file-tag">📎 ' + file.name + '</span></div>';
+    };
+    reader.readAsText(file);
+  }
 }
 
 async function toggleMic() {
