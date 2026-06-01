@@ -29,8 +29,6 @@
     .login-error { color: #ef4444; font-size: 13px; margin-bottom: 10px; min-height: 20px; }
     .divider { display: flex; align-items: center; gap: 10px; margin: 12px 0; color: #555; font-size: 12px; }
     .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: #3f3f3f; }
-    .guest-banner { background: #19c37d22; border: 1px solid #19c37d44; border-radius: 8px; padding: 8px 14px; font-size: 12px; color: #19c37d; text-align: center; margin-bottom: 4px; cursor: pointer; }
-    .guest-banner:hover { background: #19c37d33; }
     .sidebar { width: 260px; background: #171717; display: flex; flex-direction: column; padding: 12px; gap: 6px; flex-shrink: 0; transition: all 0.3s ease; overflow: hidden; }
     .sidebar.hidden { transform: translateX(-260px); width: 0; padding: 0; }
     .sidebar-title { color: white; font-size: 18px; font-weight: 700; padding: 10px 8px 16px; border-bottom: 1px solid #2f2f2f; margin-bottom: 6px; white-space: nowrap; }
@@ -66,7 +64,7 @@
     .toggle-btn svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
     .header-title { font-size: 15px; font-weight: 600; color: #ececec; }
     .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
-    .chat-area { flex: 1; overflow-y: auto; padding: 32px 20%; display: flex; flex-direction: column; gap: 20px; scroll-behavior: smooth; }
+    .chat-area { flex: 1; overflow-y: auto; padding: 32px 20%; display: flex; flex-direction: column; gap: 20px; }
     .chat-area::-webkit-scrollbar { width: 6px; }
     .chat-area::-webkit-scrollbar-thumb { background: #3f3f3f; border-radius: 3px; }
     .welcome { text-align: center; margin: auto; padding: 40px 20px; }
@@ -155,7 +153,6 @@
 
 <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
 
-<!-- LOGIN POPUP -->
 <div class="login-page" id="loginPage">
   <div class="login-box">
     <h1>KelivaX</h1>
@@ -170,11 +167,10 @@
       <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
       Continue with Google
     </button>
-    <button class="login-btn btn-skip" id="skipBtn">Continue as Guest (3 chats left)</button>
+    <button class="login-btn btn-skip" id="skipBtn">Continue as Guest (6 chats left)</button>
   </div>
 </div>
 
-<!-- MODALS -->
 <div class="modal-overlay" id="settingsModal">
   <div class="modal">
     <h2>⚙️ Settings</h2>
@@ -191,10 +187,10 @@
     <h2>❓ Get Help</h2>
     <p><strong style="color:#19c37d">How to use KelivaX:</strong></p>
     <p>• Type your question and press Enter</p>
-    <p>• Use 🎤 mic button for voice input</p>
+    <p>• Use 🎤 mic for voice input</p>
     <p>• Use + to upload images, files, videos</p>
     <p>• Click 👍 👎 to give feedback</p>
-    <p>• Use copy button to copy any message</p>
+    <p>• Copy button to copy any message</p>
     <p style="margin-top:12px;"><strong style="color:#19c37d">Contact:</strong></p>
     <p>📧 support@kelivax.com</p>
     <button class="modal-close" onclick="closeModal('helpModal')">Close</button>
@@ -203,7 +199,7 @@
 <div class="modal-overlay" id="langModal">
   <div class="modal">
     <h2>🌐 Language</h2>
-    <p style="margin-bottom:12px;">KelivaX automatically replies in the language you write in!</p>
+    <p style="margin-bottom:12px;">KelivaX replies in the language you write in!</p>
     <div class="lang-option active"><span>🇮🇳</span><span>Hindi / हिंदी</span></div>
     <div class="lang-option active"><span>🇺🇸</span><span>English</span></div>
     <div class="lang-option"><span>🇸🇦</span><span>Arabic / عربي</span></div>
@@ -214,7 +210,6 @@
   </div>
 </div>
 
-<!-- SIDEBAR -->
 <div class="sidebar" id="sidebar">
   <div class="sidebar-title">⚡ KelivaX</div>
   <button class="new-chat" id="newChatBtn">✏️ &nbsp; New Chat</button>
@@ -235,12 +230,11 @@
     <div class="profile-section">
       <div class="profile-avatar" id="profileAvatar">?</div>
       <span class="profile-name" id="profileName">Guest</span>
-      <button class="logout-btn" id="logoutBtn" title="Sign out">⏻</button>
+      <button class="logout-btn" id="logoutBtn" title="Sign out" style="display:none">⏻</button>
     </div>
   </div>
 </div>
 
-<!-- MAIN -->
 <div class="main">
   <div class="header">
     <button class="toggle-btn" onclick="toggleSidebar()">
@@ -305,7 +299,10 @@ firebase.initializeApp({
 });
 const auth = firebase.auth();
 const db = firebase.firestore();
-const GROQ_KEY = "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";
+
+// Hugging Face proxy URL — API key safe hai server pe
+const HF_API = "https://kelivax-kelivax.hf.space/run/predict";
+
 let history = [], attachments = [], mediaRecorder = null, isRecording = false, audioChunks = [];
 let currentChatId = null, currentUser = null, isSignUp = false;
 let guestMsgCount = 0;
@@ -327,18 +324,12 @@ function toggleSidebar() {
 
 function showLoginPopup(msg) {
   document.getElementById('loginSubtitle').textContent = msg || 'Sign in to continue';
-  document.getElementById('loginPage').classList.add('open');
-  updateSkipBtn();
-}
-
-function updateSkipBtn() {
   const left = GUEST_LIMIT - guestMsgCount;
-  const btn = document.getElementById('skipBtn');
-  if (left > 0) { btn.textContent = 'Continue as Guest (' + left + ' chats left)'; btn.style.display = 'block'; }
-  else { btn.style.display = 'none'; }
+  document.getElementById('skipBtn').textContent = left > 0 ? 'Continue as Guest (' + left + ' chats left)' : '';
+  document.getElementById('skipBtn').style.display = left > 0 ? 'block' : 'none';
+  document.getElementById('loginPage').classList.add('open');
 }
 
-// AUTH
 auth.onAuthStateChanged(function(user) {
   if (user) {
     currentUser = user;
@@ -355,7 +346,6 @@ auth.onAuthStateChanged(function(user) {
     document.getElementById('logoutBtn').style.display = 'none';
   }
 });
-
 document.getElementById('emailBtn').addEventListener('click', async function() {
   const email = document.getElementById('emailInput').value.trim();
   const pass = document.getElementById('passwordInput').value.trim();
@@ -385,7 +375,6 @@ document.getElementById('logoutBtn').addEventListener('click', function() {
   newChat();
 });
 
-// FIRESTORE
 async function saveToFirebase() {
   if (!currentUser || !currentChatId || history.length === 0) return;
   await db.collection('users').doc(currentUser.uid).collection('chats').doc(currentChatId).set({
@@ -424,7 +413,6 @@ async function deleteChatFromFirebase(id) {
   if (currentChatId === id) newChat(); else loadChatsFromFirebase();
 }
 
-// EVENTS
 document.getElementById('userInput').addEventListener('keydown', function(e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMsg(); } });
 document.getElementById('userInput').addEventListener('input', function() { this.style.height = 'auto'; this.style.height = Math.min(this.scrollHeight, 120) + 'px'; });
 document.getElementById('sendBtn').addEventListener('click', sendMsg);
@@ -450,21 +438,24 @@ function bindSuggestions() {
 }
 bindSuggestions();
 
-// SEND
+// SCROLL TO BOTTOM — smoothly, only when near bottom
+function scrollToBottom() {
+  const area = document.getElementById('chatArea');
+  const isNearBottom = area.scrollHeight - area.scrollTop - area.clientHeight < 200;
+  if (isNearBottom) area.scrollTop = area.scrollHeight;
+}
+
 async function sendMsg() {
   const input = document.getElementById('userInput');
   const text = input.value.trim();
   if (!text && attachments.length === 0) return;
-
-  // Guest limit check
   if (!currentUser) {
     guestMsgCount++;
     if (guestMsgCount > GUEST_LIMIT) {
-      showLoginPopup('🔒 Guest limit reached! Login to continue chatting for free.');
+      showLoginPopup('🔒 Guest limit reached! Login to continue for free.');
       return;
     }
   }
-
   document.getElementById('welcome') && document.getElementById('welcome').remove();
   if (!currentChatId) currentChatId = 'chat_' + Date.now();
   let userContent = text;
@@ -475,19 +466,17 @@ async function sendMsg() {
   attachments = []; document.getElementById('previewArea').innerHTML = '';
   document.getElementById('sendBtn').disabled = true;
   const thinkId = addThinking();
+
   try {
-    const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+    // Call Hugging Face proxy — API key safe on server
+    const res = await fetch(HF_API, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + GROQ_KEY },
-      body: JSON.stringify({
-        model: 'llama-3.3-70b-versatile',
-        messages: [{ role: 'system', content: 'You are KelivaX, a helpful and friendly AI assistant. Always respond in the same language the user writes in. Give detailed, well-formatted answers using markdown. Use relevant emojis naturally.' }, ...history],
-        max_tokens: 2048
-      })
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ data: [userContent, history.slice(0, -1)] })
     });
     const data = await res.json();
     removeThinking(thinkId);
-    const reply = data.choices[0].message.content;
+    const reply = data.data ? data.data[0] : (data.error || 'Error occurred');
     history.push({ role: 'assistant', content: reply });
     await typeMsg(reply);
     if (currentUser) saveToFirebase();
@@ -503,7 +492,8 @@ function addThinking() {
   const id = 'think_' + Date.now();
   const div = document.createElement('div'); div.className = 'msg ai'; div.id = id;
   div.innerHTML = '<div class="thinking"><span></span><span></span><span></span></div>';
-  area.appendChild(div); area.scrollTop = area.scrollHeight;
+  area.appendChild(div);
+  area.scrollTop = area.scrollHeight;
   return id;
 }
 function removeThinking(id) { const el = document.getElementById(id); if (el) el.remove(); }
@@ -533,6 +523,7 @@ function editMsg(btn) {
   document.getElementById('userInput').value = bubble.textContent;
   document.getElementById('userInput').focus();
 }
+
 async function typeMsg(text) {
   const area = document.getElementById('chatArea');
   const div = document.createElement('div'); div.className = 'msg ai';
@@ -540,18 +531,29 @@ async function typeMsg(text) {
   const mc = document.createElement('div'); mc.className = 'msg-content';
   const bubble = document.createElement('div'); bubble.className = 'bubble';
   mc.appendChild(bubble); div.appendChild(avatar); div.appendChild(mc); area.appendChild(div);
+
+  // Scroll to show new message
+  area.scrollTop = area.scrollHeight;
+
   let i = 0;
   await new Promise(function(resolve) {
     function type() {
       if (i < text.length) {
         bubble.innerHTML = marked.parse(text.slice(0, i + 1)) + '<span class="cursor"></span>';
-        i += 4; area.scrollTop = area.scrollHeight; setTimeout(type, 6);
-      } else { bubble.innerHTML = marked.parse(text); resolve(); }
+        i += 4;
+        // Only scroll if user is near bottom — no uchhalna!
+        scrollToBottom();
+        setTimeout(type, 6);
+      } else {
+        bubble.innerHTML = marked.parse(text);
+        resolve();
+      }
     }
     type();
   });
   mc.appendChild(createActions('ai', text));
 }
+
 function addMsg(text, type, atts) {
   atts = atts || [];
   const area = document.getElementById('chatArea');
@@ -569,6 +571,7 @@ function addMsg(text, type, atts) {
   div.appendChild(avatar); div.appendChild(mc); area.appendChild(div);
   area.scrollTop = area.scrollHeight;
 }
+
 function handleImage(e) {
   const file = e.target.files[0]; if (!file) return;
   const url = URL.createObjectURL(file);
@@ -607,7 +610,11 @@ async function toggleMic() {
         formData.append('file', blob, 'voice.webm');
         formData.append('model', 'whisper-large-v3');
         try {
-          const res = await fetch('https://api.groq.com/openai/v1/audio/transcriptions', { method: 'POST', headers: { 'Authorization': 'Bearer ' + GROQ_KEY }, body: formData });
+          const res = await fetch('https://api.groq.com/openai/v1/audio/transcriptions', {
+            method: 'POST',
+            headers: { 'Authorization': 'Bearer ' + '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' },
+            body: formData
+          });
           const data = await res.json();
           document.getElementById('userInput').value = data.text || '';
         } catch(e) { alert('Voice error!'); }
