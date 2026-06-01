@@ -5,126 +5,243 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>KelivaX AI</title>
     <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
-            color: #fff;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-        }
-        .container {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            padding: 40px;
-            border-radius: 15px;
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
-            width: 100%;
-            max-width: 500px;
-            text-align: center;
-            border: 1px solid rgba(255, 255, 255, 0.18);
-        }
-        h1 {
-            color: #00f2fe;
-            margin-bottom: 5px;
-            font-size: 2.5rem;
-            letter-spacing: 2px;
-        }
-        p.subtitle {
-            color: #ccc;
-            margin-bottom: 25px;
-            font-size: 0.9rem;
-        }
-        textarea {
-            width: 100%;
-            height: 120px;
-            padding: 15px;
-            background: rgba(0, 0, 0, 0.3);
-            border: 1px solid #00f2fe;
-            border-radius: 8px;
+        * {
             box-sizing: border-box;
-            resize: none;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            display: flex;
+            background-color: #131314;
+            color: #e3e3e3;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Sidebar Design */
+        .sidebar {
+            width: 260px;
+            background-color: #1e1f20;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .brand {
+            font-size: 24px;
+            font-weight: 600;
+            color: #fff;
+            letter-spacing: 1px;
+            margin-bottom: 30px;
+            background: linear-gradient(45deg, #4285f4, #9b51e0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .new-chat-btn {
+            background: #1a1a1a;
+            border: 1px solid #444;
+            color: #fff;
+            padding: 12px;
+            border-radius: 30px;
+            cursor: pointer;
+            text-align: center;
+            font-size: 14px;
+            transition: 0.3s;
+        }
+
+        .new-chat-btn:hover {
+            background: #2a2a2a;
+        }
+
+        /* Main Chat Area */
+        .chat-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background-color: #131314;
+            position: relative;
+        }
+
+        .chat-container {
+            flex: 1;
+            padding: 40px 20% 120px 20%;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        /* Responsive padding for smaller screens */
+        @media (max-width: 900px) {
+            .chat-container { padding: 20px 5% 120px 5%; }
+            .sidebar { display: none; } /* Hides sidebar on mobile */
+        }
+
+        /* Chat Bubbles */
+        .message {
+            display: flex;
+            gap: 20px;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .avatar {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+
+        .user-message .avatar {
+            background-color: #5c6bc0;
+        }
+
+        .ai-message .avatar {
+            background: linear-gradient(45deg, #00f2fe, #4facfe);
+        }
+
+        .content {
+            line-height: 1.6;
+            font-size: 16px;
+            color: #e3e3e3;
+            padding-top: 5px;
+            white-space: pre-wrap;
+        }
+
+        /* Bottom Input Container */
+        .input-container {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 20px 20%;
+            background: linear-gradient(transparent, #131314 30%);
+        }
+
+        @media (max-width: 900px) {
+            .input-container { padding: 10px 5%; }
+        }
+
+        .input-box {
+            display: flex;
+            background-color: #1e1f20;
+            border-radius: 30px;
+            padding: 10px 20px;
+            align-items: center;
+            border: 1px solid transparent;
+        }
+
+        .input-box:focus-within {
+            border-color: #444;
+        }
+
+        input {
+            flex: 1;
+            background: none;
+            border: none;
             color: #fff;
             font-size: 16px;
-            margin-bottom: 20px;
-        }
-        textarea:focus {
+            padding: 10px;
             outline: none;
-            box-shadow: 0 0 10px #00f2fe;
         }
+
+        input::placeholder {
+            color: #80868b;
+        }
+
         button {
-            background: linear-gradient(45deg, #00c6ff, #0072ff);
-            color: white;
+            background: none;
             border: none;
-            padding: 14px 20px;
-            border-radius: 8px;
-            cursor: pointer;
+            color: #4285f4;
             font-size: 16px;
             font-weight: bold;
-            width: 100%;
-            transition: 0.3s ease;
+            cursor: pointer;
+            padding: 10px;
+            transition: 0.2s;
         }
+
         button:hover {
-            opacity: 0.9;
-            box-shadow: 0 0 15px rgba(0, 198, 255, 0.5);
+            color: #8ab4f8;
         }
-        #output {
-            margin-top: 25px;
-            padding: 15px;
-            background: rgba(0, 0, 0, 0.4);
-            border-radius: 8px;
-            text-align: left;
-            min-height: 60px;
-            white-space: pre-wrap;
-            border-left: 4px solid #00f2fe;
-        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #131314; }
+        ::-webkit-scrollbar-thumb { background: #3c4043; border-radius: 4px; }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <h1>KelivaX</h1>
-    <p class="subtitle">Search Beautifully</p>
-    
-    <textarea id="userInput" placeholder="Ask KelivaX anything..."></textarea>
-    <button onclick="askKelivaX()">Generate Response</button>
-    
-    <div id="output">KelivaX response will appear here...</div>
-</div>
+    <div class="sidebar">
+        <div>
+            <div class="brand">KelivaX</div>
+            <div class="new-chat-btn" onclick="clearChat()">+ New Chat</div>
+        </div>
+        <div style="font-size: 12px; color: #80868b; text-align: center;">Powered by Hugging Face</div>
+    </div>
+
+    <div class="chat-area">
+        <div class="chat-container" id="chatContainer">
+            <div class="message ai-message">
+                <div class="avatar">K</div>
+                <div class="content">Hello! I am KelivaX. How can I help you today?</div>
+            </div>
+        </div>
+
+        <div class="input-container">
+            <div class="input-box">
+                <input type="text" id="userInput" placeholder="Message KelivaX..." onkeypress="handleKeyPress(event)">
+                <button onclick="sendMessage()">Send</button>
+            </div>
+        </div>
+    </div>
 
 <script>
-    async function askKelivaX() {
-        const input = document.getElementById('userInput').value;
-        const outputDiv = document.getElementById('output');
-        
-        if (!input) {
-            alert("Please enter a prompt!");
-            return;
-        }
+    const chatContainer = document.getElementById('chatContainer');
 
-        outputDiv.innerText = "KelivaX is thinking...";
+    function handleKeyPress(event) {
+        if (event.key === 'Enter') {
+            sendMessage();
+        }
+    }
+
+    async function sendMessage() {
+        const inputField = document.getElementById('userInput');
+        const query = inputField.value.trim();
+        
+        if (!query) return;
+
+        // 1. Clear input field
+        inputField.value = '';
+
+        // 2. Append User Message to Chat
+        appendMessage(query, 'user', 'U');
+
+        // 3. Create a temporary Loading bubble for AI
+        const loadingId = appendMessage('KelivaX is typing...', 'ai', 'K');
 
         try {
-            // Yahan aapke Hugging Face Space ka URL aayega
+            // API Call
             const response = await fetch('https://kelivax-kelivax.hf.space/predict', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ data: [input] })
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ data: [query] })
             });
 
             const result = await response.json();
-            outputDiv.innerText = result.data ? result.data[0] : "No response from KelivaX.";
-            
-        } catch (error) {
-            console.error("Error:", error);
-            outputDiv.innerText = "Error: Connected to KelivaX backend failed.";
-        }
-    }
-</script>
+            const reply = result.data ? result.data[0] : "Sorry, I couldn't fetch a response.";
 
-</body>
-</html>
+            // 4. Replace loading text with actual AI reply
