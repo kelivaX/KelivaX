@@ -326,7 +326,7 @@ function addMsg(text, type, atts) {
     if (a.type === 'image') attHtml += '<br><img src="' + a.url + '" style="max-width:200px;border-radius:8px;margin-top:8px">';
     else attHtml += '<br><span class="file-tag">📎 ' + a.name + '</span>';
   });
-  const avatar = document.createElement('div'); avatar.className = 'avatar ' + type; avatar.textContent = type === 'ai' ? 'K' : 'U';
+  const avatar = document.createElement('div'); avatar.className = 'avatar ' + type; avatar.textContent = type === '';
   const mc = document.createElement('div'); mc.className = 'msg-content';
   const bubble = document.createElement('div'); bubble.className = 'bubble';
   bubble.innerHTML = (type === 'ai' ? marked.parse(text) : text) + attHtml;
