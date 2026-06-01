@@ -301,7 +301,7 @@ const auth = firebase.auth();
 const db = firebase.firestore();
 
 // Hugging Face proxy URL — API key safe hai server pe
-const HF_API = "https://kelivax-kelivax.hf.space/run/predict";
+const HF_API = "https://kelivax-kelivax.hf.space/call/predict";
 
 let history = [], attachments = [], mediaRecorder = null, isRecording = false, audioChunks = [];
 let currentChatId = null, currentUser = null, isSignUp = false;
@@ -469,7 +469,7 @@ async function sendMsg() {
 
   try {
     // Call Hugging Face proxy — API key safe on server
-    const res = await fetch('https://kelivax-kelivax.hf.space/run/predict', {
+    const res = await fetch('https://kelivax-kelivax.hf.space/call/predict', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ data: [userContent, history.slice(0, -1)] })
@@ -610,7 +610,7 @@ async function toggleMic() {
         formData.append('file', blob, 'voice.webm');
         formData.append('model', 'whisper-large-v3');
         try {
-          const res = await fetch('https://kelivax-kelivax.hf.space/run/predict', {
+            const res = await fetch('https://kelivax-kelivax.hf.space/call/predict',;, {
   method: 'POST',
   headers: { 'Content-Type': 'application/json' },
   body: JSON.stringify({ data: [audioUrl], fn_index: 1 })
