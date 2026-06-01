@@ -610,13 +610,13 @@ async function toggleMic() {
         formData.append('file', blob, 'voice.webm');
         formData.append('model', 'whisper-large-v3');
         try {
-          const res = await fetch('https://api.groq.com/openai/v1/audio/transcriptions', {
-            method: 'POST',
-            headers: { 'Authorization': 'Bearer ' + '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' },
-            body: formData
-          });
-          const data = await res.json();
-          document.getElementById('userInput').value = data.text || '';
+          const res = await fetch('https://kelivax-kelivax.hf.space/run/predict', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ data: [audioUrl], fn_index: 1 })
+});
+const data = await res.json();
+document.getElementById('userInput').value = data.data ? data.data[0] : '';
         } catch(e) { alert('Voice error!'); }
       };
       mediaRecorder.start(); isRecording = true; btn.classList.add('active');
