@@ -9,7 +9,7 @@
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            font-family: 'Google Sans', Arial, sans-serif;
         }
 
         body {
@@ -20,167 +20,226 @@
             overflow: hidden;
         }
 
-        /* Sidebar Design */
+        /* Sidebar Style */
         .sidebar {
-            width: 260px;
+            width: 250px;
             background-color: #1e1f20;
-            padding: 20px;
+            padding: 20px 15px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
+            transition: all 0.3s ease;
         }
 
         .brand {
-            font-size: 24px;
-            font-weight: 600;
-            color: #fff;
-            letter-spacing: 1px;
+            font-size: 22px;
+            font-weight: 500;
+            padding-left: 10px;
+            background: linear-gradient(45deg, #4285f4, #ea4335, #fbbc05, #34a853);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
             margin-bottom: 30px;
-            background: linear-gradient(45deg, #4285f4, #9b51e0);
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            border-radius: 50px;
+            cursor: pointer;
+            color: #e3e3e3;
+            background-color: #1a1a1c;
+            font-size: 14px;
+            margin-bottom: 10px;
+            text-decoration: none;
+        }
+
+        .nav-item:hover {
+            background-color: #2e3032;
+        }
+
+        /* Main Container */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            background-color: #131314;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 30px;
+            font-size: 20px;
+        }
+
+        .user-avatar-top {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background-color: #5c6bc0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        /* Dashboard Welcome Screen */
+        .dashboard {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            max-width: 850px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .greeting {
+            font-size: 56px;
+            font-weight: 500;
+            margin-bottom: 40px;
+            width: 100%;
+            text-align: left;
+        }
+
+        .greeting span {
+            background: linear-gradient(160deg, #4285f4, #9b51e0, #e05170);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
-        .new-chat-btn {
-            background: #1a1a1a;
-            border: 1px solid #444;
-            color: #fff;
-            padding: 12px;
-            border-radius: 30px;
+        /* Suggestion Cards */
+        .cards-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+            width: 100%;
+        }
+
+        .card {
+            background-color: #1e1f20;
+            padding: 20px;
+            border-radius: 12px;
             cursor: pointer;
-            text-align: center;
+            min-height: 160px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
             font-size: 14px;
-            transition: 0.3s;
+            color: #c4c7c5;
+            transition: background 0.2s;
         }
 
-        .new-chat-btn:hover {
-            background: #2a2a2a;
+        .card:hover {
+            background-color: #282a2c;
         }
 
-        /* Main Chat Area */
-        .chat-area {
+        /* Chat Stream Screen */
+        .chat-stream {
+            display: none;
             flex: 1;
-            display: flex;
-            flex-direction: column;
-            background-color: #131314;
-            position: relative;
-        }
-
-        .chat-container {
-            flex: 1;
-            padding: 40px 20% 120px 20%;
             overflow-y: auto;
-            display: flex;
+            width: 100%;
+            max-width: 850px;
+            margin: 0 auto;
+            padding: 20px 20px 15px 20px;
             flex-direction: column;
-            gap: 30px;
+            gap: 32px;
         }
 
-        /* Responsive padding for smaller screens */
-        @media (max-width: 900px) {
-            .chat-container { padding: 20px 5% 120px 5%; }
-            .sidebar { display: none; } /* Hides sidebar on mobile */
-        }
-
-        /* Chat Bubbles */
-        .message {
+        .message-row {
             display: flex;
-            gap: 20px;
-            animation: fadeIn 0.3s ease-in-out;
+            gap: 24px;
+            align-items: flex-start;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .avatar {
-            width: 35px;
-            height: 35px;
+        .msg-avatar {
+            width: 32px;
+            height: 32px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: bold;
-            font-size: 14px;
+            font-weight: 500;
             flex-shrink: 0;
+            font-size: 13px;
         }
 
-        .user-message .avatar {
-            background-color: #5c6bc0;
-        }
+        .user-row .msg-avatar { background-color: #5c6bc0; }
+        .ai-row .msg-avatar { background: linear-gradient(45deg, #00f2fe, #4facfe); }
 
-        .ai-message .avatar {
-            background: linear-gradient(45deg, #00f2fe, #4facfe);
-        }
-
-        .content {
-            line-height: 1.6;
-            font-size: 16px;
+        .msg-text {
             color: #e3e3e3;
-            padding-top: 5px;
+            font-size: 16px;
+            line-height: 1.6;
             white-space: pre-wrap;
+            word-break: break-word;
         }
 
-        /* Bottom Input Container */
-        .input-container {
-            position: absolute;
-            bottom: 0;
-            left: 0;
+        /* Input Panel Area */
+        .bottom-panel {
             width: 100%;
-            padding: 20px 20%;
-            background: linear-gradient(transparent, #131314 30%);
+            max-width: 850px;
+            margin: 0 auto;
+            padding: 0 20px 25px 20px;
+            background-color: #131314;
         }
 
-        @media (max-width: 900px) {
-            .input-container { padding: 10px 5%; }
-        }
-
-        .input-box {
+        .search-wrapper {
             display: flex;
             background-color: #1e1f20;
             border-radius: 30px;
-            padding: 10px 20px;
+            padding: 8px 24px;
             align-items: center;
-            border: 1px solid transparent;
         }
 
-        .input-box:focus-within {
-            border-color: #444;
-        }
-
-        input {
+        .search-wrapper input {
             flex: 1;
             background: none;
             border: none;
             color: #fff;
             font-size: 16px;
-            padding: 10px;
+            height: 48px;
             outline: none;
         }
 
-        input::placeholder {
+        .search-wrapper input::placeholder {
             color: #80868b;
         }
 
-        button {
+        .send-action {
             background: none;
             border: none;
-            color: #4285f4;
-            font-size: 16px;
-            font-weight: bold;
+            color: #a8c7fa;
             cursor: pointer;
+            font-size: 15px;
+            font-weight: 500;
             padding: 10px;
-            transition: 0.2s;
         }
 
-        button:hover {
-            color: #8ab4f8;
+        .send-action:hover {
+            color: #c4c7c5;
         }
 
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: #131314; }
-        ::-webkit-scrollbar-thumb { background: #3c4043; border-radius: 4px; }
+        .disclaimer {
+            font-size: 12px;
+            color: #80868b;
+            text-align: center;
+            margin-top: 12px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar { display: none; }
+            .greeting { font-size: 36px; }
+        }
     </style>
 </head>
 <body>
@@ -188,60 +247,131 @@
     <div class="sidebar">
         <div>
             <div class="brand">KelivaX</div>
-            <div class="new-chat-btn" onclick="clearChat()">+ New Chat</div>
+            <div class="nav-item" onclick="resetToDashboard()">
+                <span>+ New chat</span>
+            </div>
         </div>
-        <div style="font-size: 12px; color: #80868b; text-align: center;">Powered by Hugging Face</div>
+        <div style="font-size: 11px; color: #80868b; text-align: center; padding-bottom: 10px;">
+            KelivaX v1.0
+        </div>
     </div>
 
-    <div class="chat-area">
-        <div class="chat-container" id="chatContainer">
-            <div class="message ai-message">
-                <div class="avatar">K</div>
-                <div class="content">Hello! I am KelivaX. How can I help you today?</div>
+    <div class="main-content">
+        <div class="header">
+            <div>KelivaX</div>
+            <div class="user-avatar-top">U</div>
+        </div>
+
+        <div class="dashboard" id="dashboardView">
+            <div class="greeting">
+                <span>Hello, User.</span><br>
+                <div style="color: #444746; font-size: 56px; display: inline;">How can I help you today?</div>
+            </div>
+            
+            <div class="cards-container">
+                <div class="card" onclick="fillPrompt('Write a short story about a time traveler')">
+                    <p>Write a short story about a time traveler</p>
+                </div>
+                <div class="card" onclick="fillPrompt('Help me debug a Python program')">
+                    <p>Help me debug a Python program</p>
+                </div>
+                <div class="card" onclick="fillPrompt('Suggest a 3-day itinerary for Tokyo')">
+                    <p>Suggest a 3-day itinerary for Tokyo</p>
+                </div>
             </div>
         </div>
 
-        <div class="input-container">
-            <div class="input-box">
-                <input type="text" id="userInput" placeholder="Message KelivaX..." onkeypress="handleKeyPress(event)">
-                <button onclick="sendMessage()">Send</button>
+        <div class="chat-stream" id="chatStreamView"></div>
+
+        <div class="bottom-panel">
+            <div class="search-wrapper">
+                <input type="text" id="queryInput" placeholder="Enter a prompt here..." onkeypress="handleEnterKey(event)">
+                <button class="send-action" onclick="processQuery()">Send</button>
+            </div>
+            <div class="disclaimer">
+                KelivaX may display inaccurate info, so double-check its responses.
             </div>
         </div>
     </div>
 
 <script>
-    const chatContainer = document.getElementById('chatContainer');
+    const dashboardView = document.getElementById('dashboardView');
+    const chatStreamView = document.getElementById('chatStreamView');
+    const queryInput = document.getElementById('queryInput');
 
-    function handleKeyPress(event) {
+    function handleEnterKey(event) {
         if (event.key === 'Enter') {
-            sendMessage();
+            processQuery();
         }
     }
 
-    async function sendMessage() {
-        const inputField = document.getElementById('userInput');
-        const query = inputField.value.trim();
-        
-        if (!query) return;
+    function fillPrompt(text) {
+        queryInput.value = text;
+        processQuery();
+    }
 
-        // 1. Clear input field
-        inputField.value = '';
+    async function processQuery() {
+        const textValue = queryInput.value.trim();
+        if (!textValue) return;
 
-        // 2. Append User Message to Chat
-        appendMessage(query, 'user', 'U');
+        // Display state change
+        dashboardView.style.display = 'none';
+        chatStreamView.style.display = 'flex';
 
-        // 3. Create a temporary Loading bubble for AI
-        const loadingId = appendMessage('KelivaX is typing...', 'ai', 'K');
+        // Append user prompt
+        appendMessageNode(textValue, 'user', 'U');
+        queryInput.value = '';
+
+        // Append temporary loading text
+        const uniqueResponseId = appendMessageNode('KelivaX is thinking...', 'ai', 'K');
 
         try {
-            // API Call
-            const response = await fetch('https://kelivax-kelivax.hf.space/predict', {
+            // Updated Gradio API path
+            const apiCall = await fetch('https://kelivax-kelivax.hf.space/api/predict', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ data: [query] })
+                body: JSON.stringify({ data: [textValue] })
             });
 
-            const result = await response.json();
-            const reply = result.data ? result.data[0] : "Sorry, I couldn't fetch a response.";
+            const structuredData = await apiCall.json();
+            
+            // Gradio standard output mapping
+            if (structuredData.data && structuredData.data[0]) {
+                document.getElementById(uniqueResponseId).innerText = structuredData.data[0];
+            } else if (structuredData.error) {
+                document.getElementById(uniqueResponseId).innerText = "Error: " + structuredData.error;
+            } else {
+                document.getElementById(uniqueResponseId).innerText = "Something went wrong. Please check your Hugging Face Space.";
+            }
 
-            // 4. Replace loading text with actual AI reply
+        } catch (error) {
+            console.error("API error observed: ", error);
+            document.getElementById(uniqueResponseId).innerText = "Error: Connection failed. Make sure your Hugging Face space is 'Running'.";
+        }
+    }
+
+    function appendMessageNode(textString, senderRole, initialSign) {
+        const rowElement = document.createElement('div');
+        const nodeTextId = 'text-' + Date.now() + Math.random().toString(36).substr(2, 5);
+        rowElement.className = `message-row ${senderRole}-row`;
+
+        rowElement.innerHTML = `
+            <div class="msg-avatar">${initialSign}</div>
+            <div class="msg-text" id="${nodeTextId}">${textString}</div>
+        `;
+
+        chatStreamView.appendChild(rowElement);
+        chatStreamView.scrollTop = chatStreamView.scrollHeight;
+        return nodeTextId;
+    }
+
+    function resetToDashboard() {
+        chatStreamView.innerHTML = '';
+        chatStreamView.style.display = 'none';
+        dashboardView.style.display = 'flex';
+        queryInput.value = '';
+    }
+</script>
+
+</body>
+</html>
