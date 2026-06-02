@@ -150,9 +150,7 @@
   </style>
 </head>
 <body>
-
 <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
-
 <div class="login-page" id="loginPage">
   <div class="login-box">
     <h1>KelivaX</h1>
@@ -170,7 +168,6 @@
     <button class="login-btn btn-skip" id="skipBtn">Continue as Guest (6 chats left)</button>
   </div>
 </div>
-
 <div class="modal-overlay" id="settingsModal">
   <div class="modal">
     <h2>⚙️ Settings</h2>
@@ -209,7 +206,6 @@
     <button class="modal-close" onclick="closeModal('langModal')">Close</button>
   </div>
 </div>
-
 <div class="sidebar" id="sidebar">
   <div class="sidebar-title">⚡ KelivaX</div>
   <button class="new-chat" id="newChatBtn">✏️ &nbsp; New Chat</button>
@@ -234,7 +230,6 @@
     </div>
   </div>
 </div>
-
 <div class="main">
   <div class="header">
     <button class="toggle-btn" onclick="toggleSidebar()">
@@ -282,12 +277,10 @@
     </div>
   </div>
 </div>
-
 <input type="file" id="imgInput" accept="image/*" style="display:none">
 <input type="file" id="camInput" accept="image/*" capture="environment" style="display:none">
 <input type="file" id="fileInput" accept=".pdf,.txt,.doc,.docx,.csv" style="display:none">
 <input type="file" id="videoInput" accept="video/*" style="display:none">
-
 <script>
 firebase.initializeApp({
   apiKey: "AIzaSyChbGmuLFi1P6tiBJTPCEHQQLRCYFLiGBA",
@@ -311,14 +304,12 @@ function closeModal(id) { document.getElementById(id).classList.remove('open'); 
 document.querySelectorAll('.modal-overlay').forEach(function(el) {
   el.addEventListener('click', function(e) { if (e.target === el) el.classList.remove('open'); });
 });
-
 function toggleSidebar() {
   const sidebar = document.getElementById('sidebar');
   const overlay = document.getElementById('sidebarOverlay');
   if (isMobile()) { sidebar.classList.toggle('open'); overlay.classList.toggle('open'); }
   else { sidebar.classList.toggle('hidden'); }
 }
-
 function showLoginPopup(msg) {
   document.getElementById('loginSubtitle').textContent = msg || 'Sign in to continue';
   const left = GUEST_LIMIT - guestMsgCount;
@@ -327,7 +318,6 @@ function showLoginPopup(msg) {
   skipBtn.style.display = left > 0 ? 'block' : 'none';
   document.getElementById('loginPage').classList.add('open');
 }
-
 auth.onAuthStateChanged(function(user) {
   if (user) {
     currentUser = user;
@@ -372,7 +362,6 @@ document.getElementById('logoutBtn').addEventListener('click', function() {
   document.getElementById('chatList').innerHTML = '';
   newChat();
 });
-
 async function saveToFirebase() {
   if (!currentUser || !currentChatId || history.length === 0) return;
   await db.collection('users').doc(currentUser.uid).collection('chats').doc(currentChatId).set({
@@ -410,7 +399,6 @@ async function deleteChatFromFirebase(id) {
   await db.collection('users').doc(currentUser.uid).collection('chats').doc(id).delete();
   if (currentChatId === id) newChat(); else loadChatsFromFirebase();
 }
-
 document.getElementById('userInput').addEventListener('keydown', function(e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMsg(); } });
 document.getElementById('userInput').addEventListener('input', function() { this.style.height = 'auto'; this.style.height = Math.min(this.scrollHeight, 120) + 'px'; });
 document.getElementById('sendBtn').addEventListener('click', sendMsg);
@@ -435,13 +423,11 @@ function bindSuggestions() {
   });
 }
 bindSuggestions();
-
 function scrollToBottom() {
   const area = document.getElementById('chatArea');
   const isNearBottom = area.scrollHeight - area.scrollTop - area.clientHeight < 200;
   if (isNearBottom) area.scrollTop = area.scrollHeight;
 }
-
 async function sendMsg() {
   const input = document.getElementById('userInput');
   const text = input.value.trim();
@@ -463,33 +449,31 @@ async function sendMsg() {
   attachments = []; document.getElementById('previewArea').innerHTML = '';
   document.getElementById('sendBtn').disabled = true;
   const thinkId = addThinking();
-
   try {
-    // Step 1: Start prediction
-    const startRes = await fetch(HF_URL + '/call/chat', {
+    // Build history for Gradio format
+    const gradioHistory = [];
+    for (let i = 0; i < history.length - 1; i += 2) {
+      const userMsg = history[i] ? history[i].content : '';
+      const aiMsg = history[i+1] ? history[i+1].content : '';
+      gradioHistory.push([userMsg, aiMsg]);
+    }
+    const res = await fetch(HF_URL + '/run/predict', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ data: [userContent, history.slice(0, -1).map(function(h) { return [h.role === 'user' ? h.content : null, h.role === 'assistant' ? h.content : null]; }).filter(function(h) { return h[0] || h[1]; })] })
+      body: JSON.stringify({ data: [userContent, gradioHistory], fn_index: 0 })
     });
-    const startData = await startRes.json();
-    const eventId = startData.event_id;
-
-    // Step 2: Get result
-    const resultRes = await fetch(HF_URL + '/call/chat/' + eventId);
-    const resultText = await resultRes.text();
-    const lines = resultText.split('\n');
+    const data = await res.json();
+    removeThinking(thinkId);
     let reply = '';
-    for (const line of lines) {
-      if (line.startsWith('data: ')) {
-        try {
-          const parsed = JSON.parse(line.slice(6));
-          if (Array.isArray(parsed) && parsed[0]) { reply = parsed[0]; break; }
-        } catch(e) {}
+    if (data.data && data.data[0]) {
+      // Gradio returns updated history — get last AI message
+      const updatedHistory = data.data[0];
+      if (Array.isArray(updatedHistory) && updatedHistory.length > 0) {
+        const last = updatedHistory[updatedHistory.length - 1];
+        reply = Array.isArray(last) ? (last[1] || '') : (last.content || '');
       }
     }
-
-    removeThinking(thinkId);
-    if (!reply) reply = '❌ No response received.';
+    if (!reply) reply = data.data && typeof data.data[0] === 'string' ? data.data[0] : '❌ No response received.';
     history.push({ role: 'assistant', content: reply });
     await typeMsg(reply);
     if (currentUser) saveToFirebase();
@@ -499,7 +483,6 @@ async function sendMsg() {
   }
   document.getElementById('sendBtn').disabled = false;
 }
-
 function addThinking() {
   const area = document.getElementById('chatArea');
   const id = 'think_' + Date.now();
@@ -509,7 +492,6 @@ function addThinking() {
   return id;
 }
 function removeThinking(id) { const el = document.getElementById(id); if (el) el.remove(); }
-
 function createActions(type, rawText) {
   const actions = document.createElement('div');
   actions.className = 'msg-actions';
@@ -535,7 +517,6 @@ function editMsg(btn) {
   document.getElementById('userInput').value = bubble.textContent;
   document.getElementById('userInput').focus();
 }
-
 async function typeMsg(text) {
   const area = document.getElementById('chatArea');
   const div = document.createElement('div'); div.className = 'msg ai';
@@ -549,16 +530,13 @@ async function typeMsg(text) {
     function type() {
       if (i < text.length) {
         bubble.innerHTML = marked.parse(text.slice(0, i + 1)) + '<span class="cursor"></span>';
-        i += 4;
-        scrollToBottom();
-        setTimeout(type, 6);
+        i += 4; scrollToBottom(); setTimeout(type, 6);
       } else { bubble.innerHTML = marked.parse(text); resolve(); }
     }
     type();
   });
   mc.appendChild(createActions('ai', text));
 }
-
 function addMsg(text, type, atts) {
   atts = atts || [];
   const area = document.getElementById('chatArea');
@@ -576,7 +554,6 @@ function addMsg(text, type, atts) {
   div.appendChild(avatar); div.appendChild(mc); area.appendChild(div);
   area.scrollTop = area.scrollHeight;
 }
-
 function handleImage(e) {
   const file = e.target.files[0]; if (!file) return;
   const url = URL.createObjectURL(file);
@@ -611,31 +588,19 @@ async function toggleMic() {
       mediaRecorder.ondataavailable = function(e) { audioChunks.push(e.data); };
       mediaRecorder.onstop = async function() {
         const blob = new Blob(audioChunks, { type: 'audio/webm' });
-        const formData = new FormData();
-        formData.append('file', blob, 'voice.webm');
-        formData.append('model', 'whisper-large-v3');
         try {
-          // Voice transcription via Hugging Face
-          const startRes = await fetch(HF_URL + '/call/transcribe', {
+          const formData = new FormData();
+          formData.append('files', blob, 'voice.webm');
+          const uploadRes = await fetch(HF_URL + '/upload', { method: 'POST', body: formData });
+          const uploadData = await uploadRes.json();
+          const filePath = uploadData[0];
+          const res = await fetch(HF_URL + '/run/predict', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ data: [{ path: URL.createObjectURL(blob) }] })
+            body: JSON.stringify({ data: [{ path: filePath }], fn_index: 1 })
           });
-          const startData = await startRes.json();
-          const resultRes = await fetch(HF_URL + '/call/transcribe/' + startData.event_id);
-          const resultText = await resultRes.text();
-          const lines = resultText.split('\n');
-          for (const line of lines) {
-            if (line.startsWith('data: ')) {
-              try {
-                const parsed = JSON.parse(line.slice(6));
-                if (Array.isArray(parsed) && parsed[0]) {
-                  document.getElementById('userInput').value = parsed[0];
-                  break;
-                }
-              } catch(e) {}
-            }
-          }
+          const data = await res.json();
+          document.getElementById('userInput').value = (data.data && data.data[0]) ? data.data[0] : '';
         } catch(e) { alert('Voice error!'); }
       };
       mediaRecorder.start(); isRecording = true; btn.classList.add('active');
