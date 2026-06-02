@@ -457,10 +457,10 @@ async function sendMsg() {
       const aiMsg = history[i+1] ? history[i+1].content : '';
       gradioHistory.push([userMsg, aiMsg]);
     }
-    const res = await fetch(HF_URL + '/run/predict', {
+    const res = await fetch(HF_URL + '/call/chat', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ data: [userContent, gradioHistory], fn_index: 0 })
+      body: JSON.stringify({ data: [userContent, gradioHistory] })
     });
     const data = await res.json();
     removeThinking(thinkId);
