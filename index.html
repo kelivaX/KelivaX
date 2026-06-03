@@ -465,31 +465,7 @@ async function sendMsg() {
     removeThinking(thinkId);
     addMsg('❌ Error occurred, please try again!', 'ai');
   }
-    const res = await fetch(HF_URL + '/call/chat', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ data: [userContent, gradioHistory] })
-    });
-    const data = await res.json();
-    removeThinking(thinkId);
-    let reply = '';
-    if (data.data && data.data[0]) {
-      // Gradio returns updated history — get last AI message
-      const updatedHistory = data.data[0];
-      if (Array.isArray(updatedHistory) && updatedHistory.length > 0) {
-        const last = updatedHistory[updatedHistory.length - 1];
-        reply = Array.isArray(last) ? (last[1] || '') : (last.content || '');
-      }
-    }
-    if (!reply) reply = data.data && typeof data.data[0] === 'string' ? data.data[0] : '❌ No response received.';
-    history.push({ role: 'assistant', content: reply });
-    await typeMsg(reply);
-    if (currentUser) saveToFirebase();
-  } catch(e) {
-    removeThinking(thinkId);
-    addMsg('❌ Error occurred, please try again!', 'ai');
-  }
-  document.getElementById('sendBtn').disabled = false;
+    document.getElementById('sendBtn').disabled = false;
 }
 function addThinking() {
   const area = document.getElementById('chatArea');
