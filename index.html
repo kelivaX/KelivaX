@@ -450,13 +450,21 @@ async function sendMsg() {
   document.getElementById('sendBtn').disabled = true;
   const thinkId = addThinking();
   try {
-    // Build history for Gradio format
-    const gradioHistory = [];
-    for (let i = 0; i < history.length - 1; i += 2) {
-      const userMsg = history[i] ? history[i].content : '';
-      const aiMsg = history[i+1] ? history[i+1].content : '';
-      gradioHistory.push([userMsg, aiMsg]);
-    }
+    const res = await fetch(HF_URL + '/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ messages: history })
+    });
+    const data = await res.json();
+    removeThinking(thinkId);
+    const reply = data.reply || '❌ No response received.';
+    history.push({ role: 'assistant', content: reply });
+    await typeMsg(reply);
+    if (currentUser) saveToFirebase();
+  } catch(e) {
+    removeThinking(thinkId);
+    addMsg('❌ Error occurred, please try again!', 'ai');
+  }
     const res = await fetch(HF_URL + '/call/chat', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
