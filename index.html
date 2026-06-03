@@ -28,7 +28,7 @@
     .login-toggle { color: #19c37d; cursor: pointer; font-size: 13px; margin-top: 8px; display: inline-block; }
     .login-error { color: #ef4444; font-size: 13px; margin-bottom: 10px; min-height: 20px; }
     .divider { display: flex; align-items: center; gap: 10px; margin: 12px 0; color: #555; font-size: 12px; }
-    .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: #3f3f3f; }
+    .divider::before,.divider::after { content: ''; flex: 1; height: 1px; background: #3f3f3f; }
     .sidebar { width: 260px; background: #171717; display: flex; flex-direction: column; padding: 12px; gap: 6px; flex-shrink: 0; transition: all 0.3s ease; overflow: hidden; }
     .sidebar.hidden { transform: translateX(-260px); width: 0; padding: 0; }
     .sidebar-title { color: white; font-size: 18px; font-weight: 700; padding: 10px 8px 16px; border-bottom: 1px solid #2f2f2f; margin-bottom: 6px; white-space: nowrap; }
@@ -156,8 +156,8 @@
     <h1>KelivaX</h1>
     <p id="loginSubtitle">Sign in to continue</p>
     <div class="login-error" id="loginError"></div>
-    <input class="login-input" type="email" id="emailInput" placeholder="Email address" />
-    <input class="login-input" type="password" id="passwordInput" placeholder="Password" />
+    <input class="login-input" type="email" id="emailInput" placeholder="Email address"/>
+    <input class="login-input" type="password" id="passwordInput" placeholder="Password"/>
     <button class="login-btn btn-email" id="emailBtn">Sign In</button>
     <span class="login-toggle" id="toggleMode">Don't have an account? Sign Up</span>
     <div class="divider">or</div>
@@ -173,8 +173,8 @@
     <h2>⚙️ Settings</h2>
     <p>Customize your KelivaX experience.</p>
     <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px;">
-      <label style="display:flex;align-items:center;justify-content:space-between;color:#ccc;font-size:14px;">Dark Mode <span style="background:#19c37d;width:36px;height:20px;border-radius:10px;display:flex;align-items:center;padding:2px;"><span style="width:16px;height:16px;background:white;border-radius:50%;margin-left:auto;"></span></span></label>
-      <label style="display:flex;align-items:center;justify-content:space-between;color:#ccc;font-size:14px;">Sound Effects <span style="background:#3f3f3f;width:36px;height:20px;border-radius:10px;display:flex;align-items:center;padding:2px;"><span style="width:16px;height:16px;background:#888;border-radius:50%;"></span></span></label>
+      <label style="display:flex;align-items:center;justify-content:space-between;color:#ccc;font-size:14px;">Dark Mode<span style="background:#19c37d;width:36px;height:20px;border-radius:10px;display:flex;align-items:center;padding:2px;"><span style="width:16px;height:16px;background:white;border-radius:50%;margin-left:auto;"></span></span></label>
+      <label style="display:flex;align-items:center;justify-content:space-between;color:#ccc;font-size:14px;">Sound Effects<span style="background:#3f3f3f;width:36px;height:20px;border-radius:10px;display:flex;align-items:center;padding:2px;"><span style="width:16px;height:16px;background:#888;border-radius:50%;"></span></span></label>
     </div>
     <button class="modal-close" onclick="closeModal('settingsModal')">Close</button>
   </div>
@@ -338,18 +338,14 @@ document.getElementById('emailBtn').addEventListener('click', async function() {
   const email = document.getElementById('emailInput').value.trim();
   const pass = document.getElementById('passwordInput').value.trim();
   document.getElementById('loginError').textContent = '';
-  try {
-    if (isSignUp) await auth.createUserWithEmailAndPassword(email, pass);
-    else await auth.signInWithEmailAndPassword(email, pass);
-  } catch(e) { document.getElementById('loginError').textContent = e.message; }
+  try { if (isSignUp) await auth.createUserWithEmailAndPassword(email, pass); else await auth.signInWithEmailAndPassword(email, pass); }
+  catch(e) { document.getElementById('loginError').textContent = e.message; }
 });
 document.getElementById('googleBtn').addEventListener('click', async function() {
   try { await auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()); }
   catch(e) { document.getElementById('loginError').textContent = e.message; }
 });
-document.getElementById('skipBtn').addEventListener('click', function() {
-  document.getElementById('loginPage').classList.remove('open');
-});
+document.getElementById('skipBtn').addEventListener('click', function() { document.getElementById('loginPage').classList.remove('open'); });
 document.getElementById('toggleMode').addEventListener('click', function() {
   isSignUp = !isSignUp;
   document.getElementById('loginSubtitle').textContent = isSignUp ? 'Create your account' : 'Sign in to continue';
@@ -425,8 +421,7 @@ function bindSuggestions() {
 bindSuggestions();
 function scrollToBottom() {
   const area = document.getElementById('chatArea');
-  const isNearBottom = area.scrollHeight - area.scrollTop - area.clientHeight < 200;
-  if (isNearBottom) area.scrollTop = area.scrollHeight;
+  if (area.scrollHeight - area.scrollTop - area.clientHeight < 200) area.scrollTop = area.scrollHeight;
 }
 async function sendMsg() {
   const input = document.getElementById('userInput');
@@ -434,10 +429,7 @@ async function sendMsg() {
   if (!text && attachments.length === 0) return;
   if (!currentUser) {
     guestMsgCount++;
-    if (guestMsgCount > GUEST_LIMIT) {
-      showLoginPopup('🔒 Guest limit reached! Login to continue for free.');
-      return;
-    }
+    if (guestMsgCount > GUEST_LIMIT) { showLoginPopup('🔒 Guest limit reached! Login to continue for free.'); return; }
   }
   document.getElementById('welcome') && document.getElementById('welcome').remove();
   if (!currentChatId) currentChatId = 'chat_' + Date.now();
@@ -465,7 +457,7 @@ async function sendMsg() {
     removeThinking(thinkId);
     addMsg('❌ Error occurred, please try again!', 'ai');
   }
-    document.getElementById('sendBtn').disabled = false;
+  document.getElementById('sendBtn').disabled = false;
 }
 function addThinking() {
   const area = document.getElementById('chatArea');
@@ -577,14 +569,13 @@ async function toggleMic() {
           formData.append('files', blob, 'voice.webm');
           const uploadRes = await fetch(HF_URL + '/upload', { method: 'POST', body: formData });
           const uploadData = await uploadRes.json();
-          const filePath = uploadData[0];
-          const res = await fetch(HF_URL + '/run/predict', {
+          const res = await fetch(HF_URL + '/api/transcribe', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ data: [{ path: filePath }], fn_index: 1 })
+            body: JSON.stringify({ path: uploadData[0] })
           });
           const data = await res.json();
-          document.getElementById('userInput').value = (data.data && data.data[0]) ? data.data[0] : '';
+          document.getElementById('userInput').value = data.text || '';
         } catch(e) { alert('Voice error!'); }
       };
       mediaRecorder.start(); isRecording = true; btn.classList.add('active');
